@@ -143,7 +143,7 @@ class MinresQLP(theano.gof.Op):
         rvals = compute_Gv(*self.vs)
         self.Gvs = rvals[0]
         if not isinstance(rvals[1], list):
-            self.updates = rvals[1].items()
+            self.updates = list(rvals[1].items())
         else:
             self.updates = rvals[1]
         self.mode = mode
@@ -338,8 +338,8 @@ class MinresQLP(theano.gof.Op):
         nw_xl2 = [xl2 + wl2 * self.ul2 for xl2, wl2 in zip(self.xl2s, nw_wl2)]
         nw_xs = [xl2 + wl * self.ul + w * self.u
                   for xl2, wl, w in zip(nw_xl2, nw_wl, nw_w)]
-        updates = zip(self.wl2s + self.wls + self.ws + self.xl2s + self.xs,
-                      nw_wl2 + nw_wl + nw_w + nw_xl2 + nw_xs)
+        updates = list(zip(self.wl2s + self.wls + self.ws + self.xl2s + self.xs,
+                      nw_wl2 + nw_wl + nw_w + nw_xl2 + nw_xs))
         self.update_iter1 = theano.function(
             [self.sr1, self.cr1, self.ul2, self.ul, self.u],
             [],
@@ -355,8 +355,8 @@ class MinresQLP(theano.gof.Op):
         nw_xl2 = [xl2 + wl2 * self.ul2 for xl2, wl2 in zip(self.xl2s, nw_wl2)]
         nw_xs = [xl2 + wl * self.ul + w * self.u
                  for xl2, wl, w in zip(nw_xl2, nw_wl, nw_w)]
-        updates = zip(self.wl2s + self.wls + self.ws + self.xl2s + self.xs,
-                      nw_wl2 + nw_wl + nw_w + nw_xl2 + nw_xs)
+        updates = list(zip(self.wl2s + self.wls + self.ws + self.xl2s + self.xs,
+                      nw_wl2 + nw_wl + nw_w + nw_xl2 + nw_xs))
         self.update_iter2 = theano.function(
             [self.sr1, self.cr1, self.ul2, self.ul, self.u],
             [],
@@ -378,8 +378,8 @@ class MinresQLP(theano.gof.Op):
         nw_xl2 = [xl2 + wl2 * self.ul2 for xl2, wl2 in zip(self.xl2s, nw_wl2)]
         nw_xs = [xl2 + wl * self.ul + w * self.u
                   for xl2, wl, w in zip(nw_xl2, nw_wl, nw_w)]
-        updates = zip(self.wl2s + self.wls + self.ws + self.xl2s + self.xs,
-                      nw_wl2 + nw_wl + nw_w + nw_xl2 + nw_xs)
+        updates = list(zip(self.wl2s + self.wls + self.ws + self.xl2s + self.xs,
+                      nw_wl2 + nw_wl + nw_w + nw_xl2 + nw_xs))
         inps = [self.sr1,
                 self.cr1,
                 self.sr2,
@@ -397,7 +397,7 @@ class MinresQLP(theano.gof.Op):
             allow_input_downcast=True,
             name='update_iter2')
 
-    def make_thunk(self, node, storage_map, compute_map, no_recycling):
+    def make_thunk(self, node, storage_map, compute_map, no_recycling, impl='c'):
         node_input_storage = [storage_map[r] for r in node.inputs]
         node_output_storage = [storage_map[r] for r in node.outputs]
         node_input_compute = [compute_map[r] for r in node.inputs]
@@ -767,7 +767,7 @@ def test_1():
     n = 100
     on = numpy.ones((n, 1), dtype='float32')
     A = numpy.zeros((n, n), dtype='float32')
-    for k in xrange(n):
+    for k in range(n):
         A[k, k] = 4.
         if k > 0:
             A[k - 1, k] = -2.
@@ -793,15 +793,15 @@ def test_1():
     mqlp = theano.function([], [sol, flag, iters, relres, Anorm, Acond])
     sol, flag, iters, relres, Anorm, Acond = mqlp()
     sol = numpy.array(sol)
-    print 'flag', flag
-    print messages[int(flag + 1)]
-    print 'iters', iters
-    print 'relres', relres
-    print 'Anorm', Anorm
-    print 'Acond', Acond
-    print 'error', numpy.sqrt(numpy.sum((numpy.dot(sol, A) - b) ** 2))
-    print 'Solution', sol
-    print
+    print('flag', flag)
+    print(messages[int(flag + 1)])
+    print('iters', iters)
+    print('relres', relres)
+    print('Anorm', Anorm)
+    print('Acond', Acond)
+    print('error', numpy.sqrt(numpy.sum((numpy.dot(sol, A) - b) ** 2)))
+    print('Solution', sol)
+    print()
 
 
 def test_2():
@@ -812,7 +812,7 @@ def test_2():
     A = numpy.zeros((n, n), dtype='float32')
     A = numpy.zeros((n, n), dtype='float32')
     v = a
-    for k in xrange(n):
+    for k in range(n):
         A[k, k] = v
         v += h
     b = numpy.ones((n,), dtype='float32')
@@ -833,15 +833,15 @@ def test_2():
     mqlp = theano.function([], [sol, flag, iters, relres, Anorm, Acond])
     sol, flag, iters, relres, Anorm, Acond = mqlp()
     sol = numpy.array(sol)
-    print 'flag', flag
-    print messages[int(flag + 1)]
-    print 'iters', iters
-    print 'relres', relres
-    print 'Anorm', Anorm
-    print 'Acond', Acond
-    print 'error', numpy.sqrt(numpy.sum((numpy.dot(sol, A) - b) ** 2))
-    print 'Solution', sol
-    print
+    print('flag', flag)
+    print(messages[int(flag + 1)])
+    print('iters', iters)
+    print('relres', relres)
+    print('Anorm', Anorm)
+    print('Acond', Acond)
+    print('error', numpy.sqrt(numpy.sum((numpy.dot(sol, A) - b) ** 2)))
+    print('Solution', sol)
+    print()
 
 
 def test_3():
@@ -868,15 +868,15 @@ def test_3():
     mqlp = theano.function([], [sol, flag, iters, relres, Anorm, Acond])
     sol, flag, iters, relres, Anorm, Acond = mqlp()
     sol = numpy.array(sol)
-    print 'flag', flag
-    print messages[int(flag + 1)]
-    print 'iters', iters
-    print 'relres', relres
-    print 'Anorm', Anorm
-    print 'Acond', Acond
-    print 'error', numpy.sqrt(numpy.sum((numpy.dot(sol, A) - b) ** 2))
-    print 'Solution', sol
-    print
+    print('flag', flag)
+    print(messages[int(flag + 1)])
+    print('iters', iters)
+    print('relres', relres)
+    print('Anorm', Anorm)
+    print('Acond', Acond)
+    print('error', numpy.sqrt(numpy.sum((numpy.dot(sol, A) - b) ** 2)))
+    print('Solution', sol)
+    print()
 
 if theano.sandbox.cuda.cuda_available:
     from theano.gof import local_optimizer
